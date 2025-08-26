@@ -39,25 +39,27 @@ public class GroupServiceImpl implements IGroupService {
 
     @Override
     public List<DtoGroup> getAllGroup() {
-        List<Group> groups = groupRepository.findAll();
+        User user = securityUtil.getAuthenticatedUser();
+
+        List<Group> groups = groupRepository.findByUserId(user.getId());
 
         if(groups.isEmpty()){
             throw new BaseException(new ErrorMessage(ErrorMessageType.GROUPS_IS_NULL,""));
         }
+
         List<DtoGroup> dtoGroups = new ArrayList<>();
         for(Group group : groups){
             DtoGroup dtoGroup = new DtoGroup();
             BeanUtils.copyProperties(group,dtoGroup);
             dtoGroups.add(dtoGroup);
-
         }
 
         return dtoGroups;
     }
 
+
     @Override
     public DtoGroup saveNewGroup(DtoGroupIU input) {
-
 
         User user = securityUtil.getAuthenticatedUser();
 

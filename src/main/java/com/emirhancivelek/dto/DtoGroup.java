@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DtoGroup extends BaseDtoModel {
 
-    @NotEmpty
     private String groupName;
 
 

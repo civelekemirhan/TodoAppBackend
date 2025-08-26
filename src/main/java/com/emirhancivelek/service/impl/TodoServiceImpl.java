@@ -53,6 +53,7 @@ public class TodoServiceImpl implements ITodoService {
         todo.setCreateTime(new Date());
         todo.setGroup(group.get());
         todo.setUser(user);
+        todo.setCompleted(false);
 
         Todo savedTodo = todoRepository.save(todo);
 
@@ -179,4 +180,28 @@ public class TodoServiceImpl implements ITodoService {
         todoRepository.delete(todo);
         return  true;
     }
+
+    @Override
+    @Transactional
+    public boolean checkedTodo(Long todoId, boolean completed) {
+        User user = securityUtil.getAuthenticatedUser();
+
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new BaseException(
+                        new ErrorMessage(ErrorMessageType.TODO_NOT_FOUND, "Todo bulunamadı")
+                ));
+
+        if (!todo.getUser().getId().equals(user.getId())) {
+            throw new BaseException(new ErrorMessage(
+                    ErrorMessageType.GENERAL_EXCEPTION,
+                    "Bu todo'yu güncelleme yetkiniz yok. Sizin değil"
+            ));
+        }
+
+        todo.setCompleted(completed);
+        todoRepository.save(todo);
+
+        return todo.isCompleted();
+    }
+
 }

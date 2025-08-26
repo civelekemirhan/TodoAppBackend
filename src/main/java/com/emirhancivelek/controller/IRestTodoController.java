@@ -10,11 +10,13 @@ public interface IRestTodoController {
 
     public RootEntity<DtoTodo> saveTodo(DtoTodoIU input);
     public RootEntity<List<DtoTodo>> getAllTodoCurrentUser();
-    public List<DtoTodo> getAllTodoCurrentUserByGroup(Long groupId);
+    public RootEntity<List<DtoTodo>> getAllTodoCurrentUserByGroup(Long groupId);
 
     public RootEntity<DtoTodo> updateTodo(Long todoId,DtoTodoIU input);
 
     public boolean deleteTodo(Long todoId);
+
+    public boolean checkedTodo(Long todoId, boolean completed);
 
 
 }

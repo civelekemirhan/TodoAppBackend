@@ -17,4 +17,6 @@ public interface ITodoService {
 
     public boolean deleteTodo(Long todoId);
 
+    public boolean checkedTodo(Long todoId, boolean completed);
+
 }

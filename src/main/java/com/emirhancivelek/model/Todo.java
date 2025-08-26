@@ -32,4 +32,7 @@ public class Todo extends BaseModel {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @Column(name = "isCompleted")
+    private boolean isCompleted;
+
 }

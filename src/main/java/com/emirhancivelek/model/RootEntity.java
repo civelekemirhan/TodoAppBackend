@@ -1,19 +1,19 @@
 package com.emirhancivelek.model;
 
+import com.emirhancivelek.handler.ApiError;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class RootEntity<T> {
 
     private Integer status;
 
     private T payload;
 
-    private String errorMessage;
+    private ApiError<T> errorMessage;
 
     public static  <T> RootEntity<T> ok(T payload){
         RootEntity<T> rootEntity = new RootEntity<>();
@@ -24,7 +24,7 @@ public class RootEntity<T> {
         return rootEntity;
     }
 
-    public static  <T> RootEntity<T> error(String errorMessage){
+    public static  <T> RootEntity<T> error(ApiError<T> errorMessage){
         RootEntity<T> rootEntity = new RootEntity<>();
         rootEntity.setStatus(500);
         rootEntity.setErrorMessage(errorMessage);

@@ -8,6 +8,7 @@ import com.emirhancivelek.exception.BaseException;
 import com.emirhancivelek.exception.ErrorMessage;
 import com.emirhancivelek.jwt.JwtService;
 import com.emirhancivelek.model.User;
+import com.emirhancivelek.repository.GroupRepository;
 import com.emirhancivelek.repository.UserRepository;
 import com.emirhancivelek.service.IUserService;
 import com.emirhancivelek.util.SecurityUtil;
@@ -117,4 +118,5 @@ public class UserServiceImpl implements IUserService {
 
         return true;
     }
+
 }

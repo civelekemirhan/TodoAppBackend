@@ -5,9 +5,11 @@ import com.emirhancivelek.enums.ErrorMessageType;
 import com.emirhancivelek.exception.BaseException;
 import com.emirhancivelek.exception.ErrorMessage;
 import com.emirhancivelek.jwt.JwtService;
+import com.emirhancivelek.model.Group;
 import com.emirhancivelek.model.RefreshToken;
 import com.emirhancivelek.model.Todo;
 import com.emirhancivelek.model.User;
+import com.emirhancivelek.repository.GroupRepository;
 import com.emirhancivelek.repository.RefreshTokenRepository;
 import com.emirhancivelek.repository.UserRepository;
 import com.emirhancivelek.service.IRestAuthenticationService;
@@ -35,6 +37,9 @@ public class RestAuthenticationServiceImpl implements IRestAuthenticationService
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private GroupRepository groupRepository;
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
@@ -69,7 +74,13 @@ public class RestAuthenticationServiceImpl implements IRestAuthenticationService
         user.setGenderType(request.getGenderType());
         user.setTodos(new ArrayList<>());
 
+
         userRepository.save(user);
+        Group defaultGroup = new Group();
+        defaultGroup.setGroupName("Default");
+        defaultGroup.setCreateTime(new Date());
+        defaultGroup.setUser(user);
+        groupRepository.save(defaultGroup);
 
         DtoUser dtoUser = new DtoUser();
         BeanUtils.copyProperties(user, dtoUser);

@@ -1,6 +1,7 @@
 package com.emirhancivelek.handler;
 
 import com.emirhancivelek.exception.BaseException;
+import com.emirhancivelek.model.RootEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -17,59 +18,45 @@ import java.util.*;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-
     @ExceptionHandler(BaseException.class)
-    public  ResponseEntity<ApiError<?>> handlerBaseException(BaseException ex, WebRequest webRequest){
-         return  ResponseEntity.badRequest().body(createApiError(ex.getMessage(),webRequest));
+    public ResponseEntity<RootEntity<?>> handleBaseException(BaseException ex, WebRequest webRequest) {
+        ApiError<String> apiError = createApiError(ex.getMessage(), webRequest);
+        return ResponseEntity.badRequest().body(RootEntity.error(apiError));
     }
 
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    public ResponseEntity<ApiError<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest webRequest){
-        Map<String, List<String>> map =new HashMap<>();
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<RootEntity<?>> handleValidationException(MethodArgumentNotValidException ex, WebRequest webRequest) {
+        Map<String, List<String>> map = new HashMap<>();
 
-        for(ObjectError objectError : ex.getBindingResult().getAllErrors()){
-            String fieldName = ((FieldError)objectError).getField();
-            if(map.containsKey(fieldName)){
-                map.put(fieldName,addValue(map.get(fieldName),objectError.getDefaultMessage()));
-            }else{
-                map.put(fieldName,addValue(new ArrayList<>(),objectError.getDefaultMessage()));
-            }
+        for (ObjectError objectError : ex.getBindingResult().getAllErrors()) {
+            String fieldName = ((FieldError) objectError).getField();
+            map.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(objectError.getDefaultMessage());
         }
 
-        return ResponseEntity.badRequest().body(createApiError(map,webRequest));
-
+        ApiError<Map<String, List<String>>> apiError = createApiError(map, webRequest);
+        return ResponseEntity.badRequest().body(RootEntity.error(apiError));
     }
 
-    private List<String> addValue(List<String> list , String newValue){
-        list.add(newValue);
-        return list;
-    }
-
-    private <T> ApiError<T> createApiError(T message,WebRequest webRequest){
-
-        ApiError<T> apiError =new ApiError<>();
-        Exception<T> exception = new Exception<>();
+    private <T> ApiError<T> createApiError(T message, WebRequest webRequest) {
+        ApiError<T> apiError = new ApiError<>();
+        Exception<T> exceptionDetail = new Exception<>();
 
         apiError.setStatus(HttpStatus.BAD_REQUEST.value());
-        exception.setHostName(getHostName());
-        exception.setMessage(message);
-        exception.setCreateTime(new Date());
-        exception.setPath(webRequest.getDescription(false).substring(4));
+        exceptionDetail.setHostName(getHostName());
+        exceptionDetail.setMessage(message);
+        exceptionDetail.setCreateTime(new Date());
+        exceptionDetail.setPath(webRequest.getDescription(false).substring(4));
 
-        apiError.setException(exception);
+        apiError.setException(exceptionDetail);
 
         return apiError;
-
     }
 
-    private String getHostName(){
+    private String getHostName() {
         try {
             return Inet4Address.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            return "unknown";
         }
-        return "";
-
     }
-
 }

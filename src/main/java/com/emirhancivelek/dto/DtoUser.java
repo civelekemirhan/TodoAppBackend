@@ -15,15 +15,15 @@ import java.util.List;
 public class DtoUser extends BaseDtoModel{
 
 
-    @NotEmpty
+
     private String username;
-    @NotEmpty
+
     private String firstName;
-    @NotEmpty
+
     private String lastName;
-    @NotNull
+
     private GenderType genderType;
-    @NotEmpty
+
     private List<DtoTodo> todos;
 
 

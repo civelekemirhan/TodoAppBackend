@@ -32,8 +32,8 @@ public class RestTodoControllerImpl extends RestBaseController implements IRestT
 
     @Override
     @GetMapping("/getTodos/{groupId}")
-    public List<DtoTodo> getAllTodoCurrentUserByGroup(@PathVariable(name = "groupId") Long groupId) {
-        return todoService.getAllTodoCurrentUserByGroup(groupId);
+    public RootEntity<List<DtoTodo>> getAllTodoCurrentUserByGroup(@PathVariable(name = "groupId") Long groupId) {
+        return ok(todoService.getAllTodoCurrentUserByGroup(groupId));
     }
 
     @Override
@@ -47,4 +47,14 @@ public class RestTodoControllerImpl extends RestBaseController implements IRestT
     public boolean deleteTodo(@PathVariable(name = "todoId") Long todoId) {
         return todoService.deleteTodo(todoId);
     }
+
+    @Override
+    @PutMapping("/todoState/{todoId}/{completed}")
+    public boolean checkedTodo(
+            @PathVariable(name = "todoId") Long todoId,
+            @PathVariable(name = "completed") boolean completed
+    ) {
+        return todoService.checkedTodo(todoId,completed);
+    }
+
 }
